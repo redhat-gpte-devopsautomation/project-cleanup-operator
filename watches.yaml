@@ -3,6 +3,6 @@
   group: gpte.opentlc.com
   kind: ProjectCleanup
   playbook: /opt/ansible/playbook.yml
-  reconcilePeriod: 10s
   watchClusterScopedResources: true
-#  reconcilePeriod: 3600s
+  # Reconcile every hour
+  reconcilePeriod: 1h
