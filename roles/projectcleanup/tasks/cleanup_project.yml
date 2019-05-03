@@ -1,0 +1,26 @@
+- name: Print debug information
+  debug:
+    msg: "Found Project {{ project_name }} created {{ project_creation_timestamp }}"
+- name: Print delete timestamp threshold
+  debug:
+    msg: "Delete projects older than {{ project_deletion_threshold }}"
+
+- name: Set flag to notFound
+  set_fact:
+    project_name_valid: True
+
+- name: Check if project name starts with an exclusion
+  set_fact:
+    project_name_valid: False
+  when: project_prefix in project_name
+  loop: "{{ project_ignore_prefix_list }}"
+  loop_control:
+    loop_var: project_prefix
+
+- name: Debug more
+  debug:
+    msg: "Project {{ project_name }} will be considered: {{ project_name_valid|bool }}"
+
+# creationTimestamp: 2019-04-23T23:58:39Z
+#                    YYYY-MM-DDTHH:MM:SSZ
+# Current Timestamp: "{{ ansible_date_time.date }}T{{ ansible_date_time.time }}Z"

@@ -1,23 +1,23 @@
 ---
-- name: Print some debug information 
-  vars: 
-    msg: |
-        Module Variables ("vars"):
-        --------------------------------
-        {{ vars | to_nice_json }} 
+# - name: Print some debug information 
+#   vars: 
+#     msg: |
+#         Module Variables ("vars"):
+#         --------------------------------
+#         {{ vars | to_nice_json }} 
  
-        HOST Variables ("hostvars"):
-        --------------------------------
-        {{ hostvars | to_nice_json }} 
-  debug: 
-    msg: "{{ msg.split('\n') }}"       
-  tags: debug_info
+#         HOST Variables ("hostvars"):
+#         --------------------------------
+#         {{ hostvars | to_nice_json }} 
+#   debug: 
+#     msg: "{{ msg.split('\n') }}"       
+#   tags: debug_info
 
 - name: Log ProjectCleanup event
   debug:
-    msg: "ProjectCleanup created: {{ ignore_project_prefix }}, {{ cleanupAge }}"
+    msg: "ProjectCleanup created: {{ ignore_project_prefix }}, {{ cleanup_age }}"
 
-# Find all Users and create a ClusterResourceQuota for them
+# Find all Projects
 - name: Find all projects
   k8s_facts:
     api_version: project.openshift.io/v1
@@ -25,7 +25,16 @@
   register:
     projects
 
-- name: List all projects
-  debug:
-    msg: "Found Project {{ item.metadata.name }}"
+- name: Set Deletetion Threshold
+  set_fact:
+    deletion_threshold: "{{ '%Y-%m-%dT%H:%M:%SZ' | strftime( ( ansible_date_time.epoch | int ) - ( 86400 * cleanup_age ) ) }}"
+
+- name: Run Project Cleanup Tasks
+  include_tasks: ./cleanup_project.yml
+  vars:
+    project_name: "{{ item.metadata.name }}"
+    project_creation_timestamp: "{{ item.metadata.creationTimestamp }}"
+    project_deletion_threshold: "{{ deletion_threshold }}"
+    # this is stupid... fix later
+    project_ignore_prefix_list: "{{ ignore_project_prefix }}"
   loop: "{{ projects.resources }}"
