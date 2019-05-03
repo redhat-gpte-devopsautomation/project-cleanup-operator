@@ -11,4 +11,4 @@ spec:
   - gpte
   # Maximum age of projects in days
   # Projects that are older than this setting will be deleted
-  cleanupAge: 7
+  maxDaysOld: 7

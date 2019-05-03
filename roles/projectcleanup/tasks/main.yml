@@ -15,7 +15,7 @@
 
 - name: Log ProjectCleanup event
   debug:
-    msg: "ProjectCleanup created: {{ ignore_project_prefix }}, {{ cleanup_age }}"
+    msg: "ProjectCleanup created: {{ ignore_project_prefix }}, {{ max_days_old }}"
 
 # Find all Projects
 - name: Find all projects
@@ -25,16 +25,17 @@
   register:
     projects
 
+# Calculate the timestamp before which projects will be deleted (86400 seconds in a day)
 - name: Set Deletetion Threshold
   set_fact:
-    deletion_threshold: "{{ '%Y-%m-%dT%H:%M:%SZ' | strftime( ( ansible_date_time.epoch | int ) - ( 86400 * cleanup_age ) ) }}"
+    deletion_threshold: "{{ '%Y-%m-%dT%H:%M:%SZ' | strftime( ( ansible_date_time.epoch | int ) - ( 86400 * max_days_old ) ) }}"
 
+# Call the playbook to potentiall delete the project
 - name: Run Project Cleanup Tasks
   include_tasks: ./cleanup_project.yml
   vars:
     project_name: "{{ item.metadata.name }}"
     project_creation_timestamp: "{{ item.metadata.creationTimestamp }}"
     project_deletion_threshold: "{{ deletion_threshold }}"
-    # this is stupid... fix later
     project_ignore_prefix_list: "{{ ignore_project_prefix }}"
   loop: "{{ projects.resources }}"

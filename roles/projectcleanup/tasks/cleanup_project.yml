@@ -1,9 +1,10 @@
+---
+# creationTimestamp: 2019-04-23T23:58:39Z
+#                    YYYY-MM-DDTHH:MM:SSZ
+
 - name: Print debug information
   debug:
-    msg: "Found Project {{ project_name }} created {{ project_creation_timestamp }}"
-- name: Print delete timestamp threshold
-  debug:
-    msg: "Delete projects older than {{ project_deletion_threshold }}"
+    msg: "Found Project {{ project_name }} created {{ project_creation_timestamp }}, cutoff: {{ project_deletion_threshold }}"
 
 - name: Set flag to notFound
   set_fact:
@@ -17,10 +18,16 @@
   loop_control:
     loop_var: project_prefix
 
-- name: Debug more
-  debug:
-    msg: "Project {{ project_name }} will be considered: {{ project_name_valid|bool }}"
+# - name: Print if project will be considered because it's name does not start with a ignored prefix
+#   debug:
+#     msg: "Project {{ project_name }} will be considered: {{ project_name_valid|bool }}"
 
-# creationTimestamp: 2019-04-23T23:58:39Z
-#                    YYYY-MM-DDTHH:MM:SSZ
-# Current Timestamp: "{{ ansible_date_time.date }}T{{ ansible_date_time.time }}Z"
+- name: Delete Project because it is older than allowed and doesn't start with an ignored prefix
+  k8s:
+    api_version: project.openshift.io/v1
+    kind: Project
+    name: "{{ project_name }}"
+    state: absent
+  when:
+  - project_name_valid|bool
+  - project_creation_timestamp < project_deletion_threshold
