@@ -1,0 +1,14 @@
+= Project Cleanup Operator
+
+== Overview
+
+This repository contains the code to build a Project Cleanup Operator for Red Hat OpenShift Container Platform. It will not run on Kubernetes because it uses the `Project` object which is unique to Red Hat OpenShift Container Platform.
+
+The Operator will look for a cluster scoped custom resource *ProjectCleanup* that contains the configuration for the operator. The configuration contains the default cleanup period for projects and project name prefixes to ignore.
+
+If the Project creationTimestamp is older than the cleanup period the project is deleted - unless the project name starts with a prefix to be ignored.
+
+== Building the Operator
+
+operator-sdk new --type ansible --kind ProjectCleanup --api-version gpte.opentlc.com/v1alpha1 --generate-playbook  --skip-git-init --cluster-scoped project-cleanup-operator
+

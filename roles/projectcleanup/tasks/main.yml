@@ -1,0 +1,31 @@
+---
+- name: Print some debug information 
+  vars: 
+    msg: |
+        Module Variables ("vars"):
+        --------------------------------
+        {{ vars | to_nice_json }} 
+ 
+        HOST Variables ("hostvars"):
+        --------------------------------
+        {{ hostvars | to_nice_json }} 
+  debug: 
+    msg: "{{ msg.split('\n') }}"       
+  tags: debug_info
+
+- name: Log ProjectCleanup event
+  debug:
+    msg: "ProjectCleanup created: {{ projectcleanup }}"
+
+# Find all Users and create a ClusterResourceQuota for them
+- name: Find all projects
+  k8s_facts:
+    api_version: project.openshift.io/v1
+    kind: Project
+  register:
+    projects
+
+- name: List all projects
+  debug:
+    msg: "Found Project {{ item.metadata.name }}"
+  loop: "{{ projects.resources }}"
