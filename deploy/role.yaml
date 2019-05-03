@@ -51,8 +51,8 @@ rules:
 - apiGroups:
   - gpte.opentlc.com
   resources:
-  - project-cleanup-operator
-  - project-cleanup-operator/status
+  - projectcleanups
+  - projectcleanups/status
   verbs:
   - create
   - delete
