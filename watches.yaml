@@ -4,4 +4,5 @@
   kind: ProjectCleanup
   playbook: /opt/ansible/playbook.yml
   reconcilePeriod: 10s
+  watchClusterScopedResources: true
 #  reconcilePeriod: 3600s

@@ -1,7 +1,7 @@
 apiVersion: gpte.opentlc.com/v1alpha1
 kind: ProjectCleanup
 metadata:
-  name: example-projectcleanup
+  name: default
 spec:
   # Ignore projects/namespaces starting with these strings
   ignore_project_prefix:

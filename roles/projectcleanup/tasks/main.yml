@@ -15,7 +15,7 @@
 
 - name: Log ProjectCleanup event
   debug:
-    msg: "ProjectCleanup created: {{ projectcleanup }}"
+    msg: "ProjectCleanup created: {{ ignore_project_prefix }}, {{ cleanupAge }}"
 
 # Find all Users and create a ClusterResourceQuota for them
 - name: Find all projects
