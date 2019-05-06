@@ -1,2 +1,5 @@
----
-# defaults file for projectcleanup
+# Default Values:
+# Clean up projects that are older than 7 days
+max_days_old: 7
+max_hours_old: 0
+max_minutes_old: 0

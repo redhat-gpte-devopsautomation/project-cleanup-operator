@@ -80,7 +80,10 @@ A ClusterReosurceQuota is assigned to all users by createing a Custom Resource b
 The Project Cleanup Operator understands the following settings under it's *spec* setting:
 
 * ignore_project_prefix: An array of project prefixes. Projects containing these strings will never be deleted. Default: [ default, kube, openshift, gpte ]
-* maxDaysOld: The maximum age of projects in days. Default: 7 days
+* The next three variables configure the maximum age of projects. The actual expiration gets calculated as maxDaysOld*24*60 + maxHoursOld*60 + maxMinutesOld. To delete projects every hour set maxDaysOld=0, maxHoursOld=1, maxMinutesOld=0 (or maxDaysOld=0, maxHoursOld=0, maxMinutesOld=60).
+** maxDaysOld: The maximum age of projects in days. Default: 7 days
+** maxHoursOld: The maximum age of projects in hours. Default 0 hours
+** maxMinutesOld: The maximum age of projects in minutes. Default 0 minutes
 
 [NOTE]
 Currently the name of this object *has* to be `default`.
@@ -96,12 +99,17 @@ spec:
   # Ignore projects/namespaces starting with these strings
   ignore_project_prefix:
   - default
-  - kube
-  - openshift
-  - gpte
+  - kube-
+  - openshift-
+  - gpte-
   # Maximum age of projects in days
   # Projects that are older than this setting will be deleted
+  # Granularity is minutes
+  # This will be calculated as:
+  #   maxDaysOld*24*60 + maxHoursOld*60 + maxMinutesOld
   maxDaysOld: 7
+  maxHoursOld: 0
+  maxMinutesOld: 0
 ----
 
 . Write the definition to a file (e.g. project-cleanup.yaml) and then create the project-cleanup instance:

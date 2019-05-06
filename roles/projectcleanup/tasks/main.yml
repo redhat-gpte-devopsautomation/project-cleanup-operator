@@ -28,7 +28,7 @@
 # Calculate the timestamp before which projects will be deleted (86400 seconds in a day)
 - name: Set Deletetion Threshold
   set_fact:
-    deletion_threshold: "{{ '%Y-%m-%dT%H:%M:%SZ' | strftime( ( ansible_date_time.epoch | int ) - ( 86400 * max_days_old ) ) }}"
+    deletion_threshold: "{{ '%Y-%m-%dT%H:%M:%SZ' | strftime( ( ansible_date_time.epoch | int ) - (( 86400 * max_days_old ) + ( 3600 * max_hours_old ) + ( 60 * max_minutes_old ))) }}"
 
 # Call the playbook to potentiall delete the project
 - name: Run Project Cleanup Tasks

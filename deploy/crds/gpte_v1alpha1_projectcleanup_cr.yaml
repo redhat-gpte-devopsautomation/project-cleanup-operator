@@ -6,9 +6,14 @@ spec:
   # Ignore projects/namespaces starting with these strings
   ignore_project_prefix:
   - default
-  - kube
-  - openshift
-  - gpte
+  - kube-
+  - openshift-
+  - gpte-
   # Maximum age of projects in days
   # Projects that are older than this setting will be deleted
+  # Granularity is minutes
+  # This will be calculated as:
+  #   maxDaysOld*24*50 + maxHoursOld*60 + maxMinutesOld
   maxDaysOld: 7
+  maxHoursOld: 0
+  maxMinutesOld: 0

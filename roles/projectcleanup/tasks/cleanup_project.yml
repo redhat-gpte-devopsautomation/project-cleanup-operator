@@ -13,14 +13,21 @@
 - name: Check if project name starts with an exclusion
   set_fact:
     project_name_valid: False
-  when: project_prefix in project_name
+  when: project_name is match(project_prefix + "*")
   loop: "{{ project_ignore_prefix_list }}"
   loop_control:
     loop_var: project_prefix
 
-# - name: Print if project will be considered because it's name does not start with a ignored prefix
+- name: Print if project will be considered because it's name does not start with a ignored prefix
+  debug:
+    msg: "Project {{ project_name }} will be considered: {{ project_name_valid|bool }}"
+
+# - name: Print if project would be eligible for deletion
 #   debug:
-#     msg: "Project {{ project_name }} will be considered: {{ project_name_valid|bool }}"
+#     msg: "Would delete project {{ project_name }}..."
+#   when:
+#   - project_name_valid|bool
+#   - project_creation_timestamp < project_deletion_threshold
 
 - name: Delete Project because it is older than allowed and doesn't start with an ignored prefix
   k8s:
